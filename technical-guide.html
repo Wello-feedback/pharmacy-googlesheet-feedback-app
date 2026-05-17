@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technical Architecture Guide - Pharmacy Feedback System</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --text-sec: #64748b;
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --accent: #10b981;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-sec);
+    }
+    
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    
+    h3 {
+      font-size: 1.2rem;
+      color: #334155;
+      margin-top: 24px;
+    }
+    
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    
+    .tech-item {
+      background: var(--bg);
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .tech-icon {
+      font-size: 24px;
+    }
+    
+    .process-step {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    
+    .step-number {
+      background: var(--primary);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    }
+    
+    code {
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      color: #db2777;
+    }
+    
+    .highlight-box {
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      padding: 16px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>System Architecture Guide</h1>
+      <p class="subtitle">Wello Pharmacy Feedback System &mdash; Full Technical Documentation</p>
+    </header>
+
+    <div class="card">
+      <h2>1. Technology Stack</h2>
+      <p>This system was built with a "Serverless, Zero-Cost" architecture, prioritizing speed, maintainability, and zero hosting fees.</p>
+      
+      <div class="tech-grid">
+        <div class="tech-item">
+          <span class="tech-icon">🌐</span>
+          <div>
+            <strong>HTML5 & CSS3</strong><br>
+            <span style="font-size:0.85rem;color:var(--text-sec)">Responsive UI framework (Vanilla)</span>
+          </div>
+        </div>
+        <div class="tech-item">
+          <span class="tech-icon">⚡</span>
+          <div>
+            <strong>Vanilla JavaScript (ES6+)</strong><br>
+            <span style="font-size:0.85rem;color:var(--text-sec)">DOM manipulation & async API Fetch</span>
+          </div>
+        </div>
+        <div class="tech-item">
+          <span class="tech-icon">☁️</span>
+          <div>
+            <strong>Google Apps Script</strong><br>
+            <span style="font-size:0.85rem;color:var(--text-sec)">Serverless API Backend (Node.js-like)</span>
+          </div>
+        </div>
+        <div class="tech-item">
+          <span class="tech-icon">📊</span>
+          <div>
+            <strong>Google Sheets</strong><br>
+            <span style="font-size:0.85rem;color:var(--text-sec)">Relational Database Replacement</span>
+          </div>
+        </div>
+        <div class="tech-item">
+          <span class="tech-icon">🐙</span>
+          <div>
+            <strong>GitHub Pages</strong><br>
+            <span style="font-size:0.85rem;color:var(--text-sec)">Static Frontend Hosting (CDN)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2. Architecture Overview</h2>
+      <p>The system is cleanly decoupled into two main components: a <b>Static Frontend</b> and a <b>Serverless API</b>.</p>
+      
+      <h3>The Frontend (Client-Side)</h3>
+      <p>Hosted entirely on GitHub Pages, making it globally cached and extremely fast. It consists of two interfaces:</p>
+      <ul>
+        <li><b>Customer Form (<code>index.html</code>):</b> Optimized for mobile browsers (viewport locked). Uses JS Geolocation API to fetch GPS coords.</li>
+        <li><b>Admin Dashboard (<code>admin.html</code>):</b> Secured via local browser session storage. Renders data dynamically into tables and charts using pure JS DOM manipulation.</li>
+      </ul>
+
+      <h3>The Backend (Server-Side)</h3>
+      <p>Google Apps Script is deployed as a "Web App", acting as a REST API. When <code>doPost()</code> or <code>doGet()</code> triggers, it parses the JSON payload, routes it to the specific function (e.g. <code>addFeedback()</code>), and performs read/write operations on the Google Sheet using the <code>SpreadsheetApp</code> service. Finally, it returns a <code>ContentService.MimeType.JSON</code> response back to the client.</p>
+    </div>
+
+    <div class="card">
+      <h2>3. Technical Data Flow (Step-by-Step)</h2>
+      
+      <div class="process-step">
+        <div class="step-number">1</div>
+        <div>
+          <strong>QR Code Scan & Form Initialization</strong>
+          <p>Customer scans a branch-specific QR code. The URL contains a URL Parameter (e.g., <code>?branch=025</code>). JavaScript intercepts this parameter to lock the feedback to the specific branch. JS concurrently requests GPS permissions via <code>navigator.geolocation</code>.</p>
+        </div>
+      </div>
+
+      <div class="process-step">
+        <div class="step-number">2</div>
+        <div>
+          <strong>Data Submission & CORS Handling</strong>
+          <p>Upon clicking submit, JS packages the rating, tags, comments, and coordinates into a JSON string. It uses the <code>fetch()</code> API to send an asynchronous POST request. The Google Script natively handles CORS requests, allowing GitHub Pages to securely write data cross-origin.</p>
+        </div>
+      </div>
+
+      <div class="process-step">
+        <div class="step-number">3</div>
+        <div>
+          <strong>Database Write (Google Sheets)</strong>
+          <p>The backend intercepts the request in the <code>doPost(e)</code> event object. It parses the body, connects to the "Feedback" sheet tab, and executes <code>sheet.appendRow()</code>, pushing a new timestamped row. A success JSON response is sent back to clear the customer's UI.</p>
+        </div>
+      </div>
+
+      <div class="process-step">
+        <div class="step-number">4</div>
+        <div>
+          <strong>Automated Reporting (Cron Jobs)</strong>
+          <p>The backend utilizes Google's Time-Driven Triggers (ScriptApp). The <code>setup()</code> function initializes a cron job that runs daily between 8:00 AM - 9:00 AM. This background worker checks the "Settings" sheet tab for the Admin's configured frequency (Daily, Weekly, Monthly) and uses <code>MailApp.sendEmail()</code> to dispatch a dynamically compiled HTML email report containing calculated analytics and a CSV attachment Blob.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>4. Security & Optimization Concepts Used</h2>
+      
+      <div class="highlight-box">
+        <strong>Data Type Sanitization:</strong> A critical safeguard implemented in <code>admin.js</code> ensures that branch codes parsed from Google Sheets (which aggressively auto-casts values to numbers) are strictly cast back using <code>String(value)</code> before performing Regex or UI replacements, preventing application crashes.
+      </div>
+      
+      <ul>
+        <li><b>Debouncing / Event Delegation:</b> UI events (like search filters) are heavily optimized to prevent excessive DOM reflows.</li>
+        <li><b>Lightweight State Management:</b> Instead of Redux, the app uses a centralized <code>state</code> object (<code>let state = { branches: [], page: 1, ... }</code>) to manage the source of truth for the dashboard.</li>
+        <li><b>Local Storage Auth:</b> The admin portal uses <code>sessionStorage</code> and <code>localStorage</code> to maintain admin state without requiring complex JWT token databases.</li>
+      </ul>
+    </div>
+
+    <footer style="text-align: center; color: var(--text-sec); margin-top: 40px;">
+      <p>&copy; 2026 Wello Retail Pvt Ltd. &mdash; System engineered for high availability and zero maintenance overhead.</p>
+    </footer>
+  </div>
+
+</body>
+</html>
