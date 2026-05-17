@@ -242,12 +242,12 @@
   </div>
 
   <script>
-    const API = window.location.origin;
+    const API_URL = "https://script.google.com/macros/s/AKfycbw318fXXX7UyCiTRb2Ucrn4ulvyiPqWFliBAc1laygM7XAoqTm8Lh-yFeDQ1bzmeODLCg/exec";
 
     async function loadQRCodes() {
       const grid = document.getElementById('qr-grid');
       try {
-        const res = await fetch(`${API}/api/branches`);
+        const res = await fetch(`${API_URL}?action=getBranches`);
         const branches = await res.json();
 
         grid.innerHTML = branches.map(b => `
@@ -259,7 +259,7 @@
             <div class="card-subtitle">Wellness For All</div>
 
             <div class="qr-frame">
-              <img src="/api/qr/${b.code}" alt="Scan QR Code"/>
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(window.location.origin + window.location.pathname.replace('print-qr.html', 'index.html') + '?branch=' + b.code)}" alt="Scan QR Code"/>
             </div>
 
             <div class="scan-cta-wrap">

@@ -3,22 +3,72 @@
  */
 (function () {
   "use strict";
-  const API = window.location.origin;
-  let state = { branch: "", page: 1, limit: 15, branches: [], editingBranch: null, deletingBranch: null };
+  const API_URL = "https://script.google.com/macros/s/AKfycbw318fXXX7UyCiTRb2Ucrn4ulvyiPqWFliBAc1laygM7XAoqTm8Lh-yFeDQ1bzmeODLCg/exec";
+  const APP_URL = window.location.origin; // For generating QR codes
+  let state = { branch: "", page: 1, limit: 15, branches: [], editingBranch: null, deletingBranch: null, settings: {} };
 
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => document.querySelectorAll(s);
 
-  async function init() {
+  function init() {
+    if (!checkAuth()) {
+      setupLogin();
+    } else {
+      initData();
+    }
+  }
+
+  function checkAuth() {
+    if (sessionStorage.getItem("adminAuth") === "true") {
+      const overlay = $("#login-overlay");
+      if (overlay) overlay.style.display = "none";
+      return true;
+    }
+    return false;
+  }
+
+  function setupLogin() {
+    const btn = $("#login-btn");
+    if (!btn) return;
+    $("#login-pass").addEventListener("keydown", (e) => { if (e.key === "Enter") handleLogin(); });
+    btn.addEventListener("click", handleLogin);
+  }
+
+  function handleLogin() {
+    const u = $("#login-user").value;
+    const p = $("#login-pass").value;
+    const savedPass = localStorage.getItem("adminPass") || "TerminaL@123!";
+    if (u === "wello" && p === savedPass) {
+      sessionStorage.setItem("adminAuth", "true");
+      $("#login-overlay").style.display = "none";
+      $("#login-error").style.display = "none";
+      initData();
+    } else {
+      $("#login-error").style.display = "block";
+    }
+  }
+
+  async function initData() {
     await loadBranches();
-    await Promise.all([loadAnalytics(), loadFeedback()]);
+    await Promise.all([loadAnalytics(), loadFeedback(), loadSettings()]);
     setupEvents();
+  }
+
+  // ─── Settings ──────────────────────────────────────────
+  async function loadSettings() {
+    try {
+      const r = await fetch(`${API_URL}?action=getSettings`);
+      const res = await r.json();
+      if (res.success && res.data) {
+        state.settings = res.data;
+      }
+    } catch (e) { console.error("Failed to load settings", e); }
   }
 
   // ─── Branches ──────────────────────────────────────────
   async function loadBranches() {
     try {
-      const r = await fetch(`${API}/api/branches`);
+      const r = await fetch(`${API_URL}?action=getBranches`);
       state.branches = await r.json();
       const sel = $("#branch-filter");
       sel.innerHTML = '<option value="">All Branches</option>';
@@ -31,8 +81,8 @@
   // ─── Analytics ─────────────────────────────────────────
   async function loadAnalytics() {
     try {
-      const q = state.branch ? `?branch_code=${state.branch}` : "";
-      const r = await fetch(`${API}/api/feedback/analytics${q}`);
+      const q = state.branch ? `&branch_code=${state.branch}` : "";
+      const r = await fetch(`${API_URL}?action=getAnalytics${q}`);
       const d = await r.json();
       $("#kpi-total").textContent = d.total_feedback || 0;
       $("#kpi-avg").textContent = d.avg_rating || "0.0";
@@ -48,7 +98,7 @@
     const tbody = $("#feedback-tbody");
     tbody.innerHTML = '<tr><td colspan="8"><div class="loading-spinner"><div class="spinner"></div></div></td></tr>';
     try {
-      let url = `${API}/api/feedback/list?page=${state.page}&limit=${state.limit}`;
+      let url = `${API_URL}?action=getFeedback&page=${state.page}&limit=${state.limit}`;
       if (state.branch) url += `&branch_code=${state.branch}`;
       const search = $("#search-input");
       if (search && search.value) url += `&search=${encodeURIComponent(search.value)}`;
@@ -83,6 +133,7 @@
         <td><div class="tags-cell">${tags || "—"}</div></td>
         <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${(f.comments || "").replace(/"/g, "&quot;")}">${f.comments || "—"}</td>
         <td>${loc}</td>
+        <td style="text-align:center;"><button class="btn-icon btn-delete" onclick="window._deleteFeedback(${f.id})" title="Delete Feedback">🗑️</button></td>
       </tr>`;
     }).join("");
 
@@ -98,6 +149,30 @@
   }
 
   window._goPage = function (p) { if (p >= 1) { state.page = p; loadFeedback(); } };
+
+  window._deleteFeedback = async function (id) {
+    if (!confirm("Are you sure you want to delete this feedback? This cannot be undone.")) return;
+    try {
+      const r = await fetch(`${API_URL}?action=deleteFeedback`, { 
+        method: "POST", 
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({id: id})
+      });
+      if (!r.ok) {
+        const err = await r.json();
+        showToast(err.detail || "Delete failed", "error");
+        return;
+      }
+      showToast("Feedback deleted successfully", "success");
+      if ($("#feedback-tbody").children.length === 1 && state.page > 1) {
+        state.page -= 1;
+      }
+      loadFeedback();
+      loadAnalytics();
+    } catch (e) {
+      showToast("Network error. Please try again.", "error");
+    }
+  };
 
   // ─── Rating Bars ────────────────────────────────────────
   function renderRatingBars(dist, total) {
@@ -219,7 +294,11 @@
     if (!code) return;
 
     try {
-      const r = await fetch(`${API}/api/branches/${code}`, { method: "DELETE" });
+      const r = await fetch(`${API_URL}?action=deleteBranch`, { 
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({code: code})
+      });
       if (!r.ok) {
         const err = await r.json();
         showToast(err.detail || "Delete failed", "error");
@@ -254,22 +333,13 @@
     const payload = { code, name };
 
     try {
-      let r;
-      if (state.editingBranch) {
-        // Update
-        r = await fetch(`${API}/api/branches/${state.editingBranch}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      } else {
-        // Add new
-        r = await fetch(`${API}/api/branches`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      }
+      // For Apps Script, add and edit can use the same addBranch action 
+      // because addBranch in Apps Script updates if the code already exists
+      const r = await fetch(`${API_URL}?action=addBranch`, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+      });
 
       if (!r.ok) {
         const err = await r.json();
@@ -290,12 +360,21 @@
   window._showCodes = function (code, name) {
     $("#code-preview-title").textContent = "Codes for " + code;
     $("#code-preview-branch").textContent = name;
-    $("#preview-qr-img").src = `/api/qr/${code}`;
-    $("#preview-barcode-img").src = `/api/barcode/${code}`;
-    $("#download-qr-link").href = `/api/qr/${code}`;
-    $("#download-qr-link").download = `qr_${code}.png`;
-    $("#download-barcode-link").href = `/api/barcode/${code}`;
-    $("#download-barcode-link").download = `barcode_${code}.png`;
+    
+    // Generate QR using third party API
+    const feedbackUrl = `${APP_URL}/index.html?branch=${code}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=${encodeURIComponent(feedbackUrl)}`;
+    const barcodeUrl = `https://barcode.tec-it.com/barcode.ashx?data=PH-${code}&code=Code128&dpi=96`;
+
+    $("#preview-qr-img").src = qrUrl;
+    $("#preview-barcode-img").src = barcodeUrl;
+    
+    // For external URLs, download attribute might not work perfectly due to cross-origin, 
+    // but we can just link to it with target=_blank
+    $("#download-qr-link").href = qrUrl;
+    $("#download-qr-link").target = "_blank";
+    $("#download-barcode-link").href = barcodeUrl;
+    $("#download-barcode-link").target = "_blank";
 
     // Reset to QR tab
     switchCodeTab("qr");
@@ -334,13 +413,19 @@
     const grid = $("#qr-grid");
     grid.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
     try {
-      const r = await fetch(`${API}/api/qr-all`);
-      const list = await r.json();
-      grid.innerHTML = list.map((b) => `<div class="qr-item">
-        <img src="${b.qr_url}" alt="QR ${b.code}" loading="lazy"/>
-        <div class="qr-branch">${b.code} - ${b.name}</div>
-        <div class="qr-code-label"><a href="${b.qr_url}" download="qr_${b.code}.png">⬇ Download</a></div>
-      </div>`).join("");
+      // Use state.branches to render QR codes instead of separate API call
+      if (state.branches.length === 0) {
+        await loadBranches();
+      }
+      grid.innerHTML = state.branches.map((b) => {
+        const feedbackUrl = `${APP_URL}/index.html?branch=${b.code}`;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=${encodeURIComponent(feedbackUrl)}`;
+        return `<div class="qr-item">
+          <img src="${qrUrl}" alt="QR ${b.code}" loading="lazy"/>
+          <div class="qr-branch">${b.code} - ${b.name}</div>
+          <div class="qr-code-label"><a href="${qrUrl}" target="_blank">View / Download</a></div>
+        </div>`;
+      }).join("");
     } catch (e) { grid.innerHTML = '<p style="color:var(--text-muted)">Failed to load QR codes</p>'; }
   }
 
@@ -355,8 +440,8 @@
     });
     $("#search-btn").addEventListener("click", () => { state.page = 1; loadFeedback(); });
     $("#export-btn").addEventListener("click", () => {
-      const q = state.branch ? `?branch_code=${state.branch}` : "";
-      window.open(`${API}/api/feedback/export${q}`, "_blank");
+      showToast("Please export CSV directly from your Google Sheet.", "success");
+      window.open("https://docs.google.com/spreadsheets/", "_blank");
     });
 
     // QR modal
@@ -368,6 +453,86 @@
     $("#branch-form").addEventListener("submit", saveBranch);
     $("#confirm-delete-btn").addEventListener("click", confirmDelete);
 
+    // Email Report & Scheduling
+    $("#email-report-btn").addEventListener("click", () => {
+      $("#report-email-input").value = "";
+      if (state.settings) {
+        $("#auto-email-input").value = state.settings.email || "";
+        $("#auto-freq-input").value = state.settings.frequency || "none";
+      }
+      $("#email-report-modal").classList.add("visible");
+    });
+    
+    // Save Auto Schedule
+    $("#save-schedule-btn").addEventListener("click", async () => {
+      const email = $("#auto-email-input").value.trim();
+      const freq = $("#auto-freq-input").value;
+      
+      if (freq !== "none" && (!email || !email.includes("@"))) {
+        showToast("Please enter a valid email for automated reports", "error");
+        return;
+      }
+      
+      const btn = $("#save-schedule-btn");
+      const originalText = btn.textContent;
+      btn.textContent = "Saving...";
+      btn.disabled = true;
+      
+      try {
+        const r = await fetch(`${API_URL}?action=saveSettings`, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ email: email, frequency: freq })
+        });
+        const res = await r.json();
+        if (res.success) {
+          state.settings = { email, frequency: freq };
+          showToast("Automated schedule saved successfully!", "success");
+        } else {
+          showToast("Failed to save schedule", "error");
+        }
+      } catch (e) {
+        showToast("Network error", "error");
+      }
+      
+      btn.textContent = originalText;
+      btn.disabled = false;
+    });
+    
+    $("#send-report-btn").addEventListener("click", async () => {
+      const email = $("#report-email-input").value.trim();
+      const days = parseInt($("#manual-timeframe-input").value) || 7;
+      
+      if (!email || !email.includes("@")) {
+        showToast("Please enter a valid email", "error");
+        return;
+      }
+      
+      const btn = $("#send-report-btn");
+      btn.textContent = "Sending...";
+      btn.disabled = true;
+      
+      try {
+        const r = await fetch(`${API_URL}?action=sendReport`, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ email: email, days: days })
+        });
+        const res = await r.json();
+        if (res.success) {
+          showToast("Manual report sent successfully!", "success");
+          $("#email-report-modal").classList.remove("visible");
+        } else {
+          showToast("Failed: " + res.message, "error");
+        }
+      } catch (e) {
+        showToast("Network error", "error");
+      }
+      
+      btn.textContent = "Send Now";
+      btn.disabled = false;
+    });
+
     // Close modals on overlay click
     $$(".modal-overlay").forEach((overlay) => {
       overlay.addEventListener("click", (e) => {
@@ -378,8 +543,61 @@
     // ESC to close modals
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
+        $$("#profile-menu").forEach((m) => m.classList.remove("show"));
         $$(".modal-overlay.visible").forEach((m) => m.classList.remove("visible"));
       }
+    });
+
+    // ─── Profile Dropdown ─────────────────────────────
+    $("#profile-toggle").addEventListener("click", (e) => {
+      e.stopPropagation();
+      $("#profile-menu").classList.toggle("show");
+    });
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".profile-wrap")) {
+        $("#profile-menu").classList.remove("show");
+      }
+    });
+
+    // ─── Logout ───────────────────────────────────────
+    $("#logout-btn").addEventListener("click", () => {
+      sessionStorage.removeItem("adminAuth");
+      $("#profile-menu").classList.remove("show");
+      $("#login-user").value = "";
+      $("#login-pass").value = "";
+      $("#login-overlay").style.display = "flex";
+    });
+
+    // ─── Change Password ─────────────────────────────
+    $("#change-pass-btn").addEventListener("click", () => {
+      $("#profile-menu").classList.remove("show");
+      $("#current-pass-input").value = "";
+      $("#new-pass-input").value = "";
+      $("#confirm-pass-input").value = "";
+      $("#password-modal").classList.add("visible");
+    });
+
+    $("#save-pass-btn").addEventListener("click", () => {
+      const currentPass = $("#current-pass-input").value;
+      const newPass = $("#new-pass-input").value;
+      const confirmPass = $("#confirm-pass-input").value;
+      const savedPass = localStorage.getItem("adminPass") || "TerminaL@123!";
+
+      if (currentPass !== savedPass) {
+        showToast("Current password is incorrect", "error");
+        return;
+      }
+      if (newPass.length < 6) {
+        showToast("New password must be at least 6 characters", "error");
+        return;
+      }
+      if (newPass !== confirmPass) {
+        showToast("Passwords do not match", "error");
+        return;
+      }
+      localStorage.setItem("adminPass", newPass);
+      $("#password-modal").classList.remove("visible");
+      showToast("Password updated successfully!", "success");
     });
   }
 

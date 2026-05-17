@@ -242,6 +242,21 @@ async def submit_feedback(feedback: FeedbackCreate):
     return {"success": True, "message": "Feedback submitted successfully!"}
 
 
+@app.delete("/api/feedback/{feedback_id}")
+async def delete_feedback(feedback_id: int):
+    """Delete a customer feedback entry."""
+    conn = get_db()
+    existing = conn.execute("SELECT id FROM feedback WHERE id = ?", (feedback_id,)).fetchone()
+    if not existing:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Feedback not found")
+    
+    conn.execute("DELETE FROM feedback WHERE id = ?", (feedback_id,))
+    conn.commit()
+    conn.close()
+    return {"success": True, "message": "Feedback deleted successfully"}
+
+
 @app.get("/api/feedback/list")
 async def get_feedback_list(
     branch_code: Optional[str] = None,

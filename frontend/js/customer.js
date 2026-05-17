@@ -7,7 +7,7 @@
   "use strict";
 
   // ─── Configuration ──────────────────────────────────────
-  const API_BASE = window.location.origin;
+  const API_URL = "https://script.google.com/macros/s/AKfycbw318fXXX7UyCiTRb2Ucrn4ulvyiPqWFliBAc1laygM7XAoqTm8Lh-yFeDQ1bzmeODLCg/exec";
   const RATING_LABELS = [
     "",
     "😟 Very Poor",
@@ -72,7 +72,7 @@
   // ─── Fetch Branch Details ───────────────────────────────
   async function fetchBranchDetails() {
     try {
-      const res = await fetch(`${API_BASE}/api/branches`);
+      const res = await fetch(`${API_URL}?action=getBranches`);
       const branches = await res.json();
       const branch = branches.find((b) => b.code === state.branchCode);
 
@@ -251,9 +251,9 @@
     submitBtn.disabled = true;
 
     try {
-      const res = await fetch(`${API_BASE}/api/feedback/submit`, {
+      const res = await fetch(`${API_URL}?action=addFeedback`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload),
       });
 

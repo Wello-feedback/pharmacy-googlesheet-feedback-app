@@ -185,9 +185,10 @@ a { color: var(--navy); text-decoration: none; }
 .table-header h3 { font-size: 1rem; font-weight: 600; color: var(--navy); }
 .table-wrapper {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); overflow: hidden;
+  border-radius: var(--radius); overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
-table { width: 100%; border-collapse: collapse; }
+table { width: 100%; border-collapse: collapse; min-width: 800px; }
 thead { background: var(--surface-alt); }
 th {
   padding: 12px 16px; font-size: 0.76rem; font-weight: 600;
@@ -292,9 +293,10 @@ tr:hover td { background: rgba(27,45,90,0.02); }
 .branch-table-wrapper {
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
-.branch-table { width: 100%; border-collapse: collapse; }
+.branch-table { width: 100%; border-collapse: collapse; min-width: 600px; }
 .branch-table thead { background: var(--surface-alt); }
 .branch-table th {
   padding: 11px 16px; font-size: 0.73rem; font-weight: 600;
@@ -460,12 +462,23 @@ tr:hover td { background: rgba(27,45,90,0.02); }
 @media (max-width: 600px) {
   .topbar, .filters-bar, .kpi-grid, .charts-grid, .table-section { padding-left: 14px; padding-right: 14px; }
   .kpi-grid { grid-template-columns: 1fr; }
-  table { font-size: 0.8rem; }
-  th, td { padding: 10px 10px; }
-  .topbar { flex-direction: column; gap: 10px; }
-  .topbar-actions { flex-wrap: wrap; justify-content: center; }
-  .modal { padding: 20px; width: 96%; }
-  .modal-lg { max-width: 96%; }
+  
+  .topbar { flex-direction: column; gap: 12px; align-items: stretch; padding-top: 18px; padding-bottom: 18px; }
+  .topbar-brand { justify-content: center; margin-bottom: 4px; }
+  .topbar-actions { 
+    flex-wrap: wrap; justify-content: center; gap: 8px; 
+  }
+  .topbar-actions .btn { font-size: 0.75rem; padding: 8px 12px; flex: 1 1 calc(50% - 8px); text-align: center; justify-content: center; }
+  
+  .filters-bar { flex-direction: column; align-items: stretch; }
+  .filter-select, .filter-input { min-width: 100%; width: 100%; }
+  #search-btn { width: 100%; justify-content: center; }
+
+  .modal { padding: 20px; width: 92%; margin: 10px; }
+  .modal-lg { max-width: 100%; }
   .modal-header-row { flex-direction: column; gap: 10px; align-items: flex-start; }
   .code-preview-actions { flex-direction: column; }
+  
+  table { font-size: 0.82rem; }
+  th, td { padding: 12px 14px; }
 }

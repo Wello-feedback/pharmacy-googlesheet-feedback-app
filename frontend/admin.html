@@ -11,6 +11,157 @@
   <link rel="stylesheet" href="css/admin.css"/>
 </head>
 <body>
+  <!-- Login Overlay -->
+  <style>
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    #login-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle at center, #2563eb 0%, #1e3a8a 50%, #0f172a 100%);
+      z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .login-card {
+      width: 100%; max-width: 380px;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 5px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      animation: cardFadeIn 0.3s ease-out forwards;
+      box-sizing: border-box;
+    }
+
+    .login-logo {
+      width: 130px; height: auto;
+      margin: 0 auto 20px;
+      display: block;
+    }
+
+    .login-logo img {
+      width: 100%; height: auto; object-fit: contain;
+    }
+
+    .login-card h2 {
+      margin: 0 0 30px 0; color: #0f172a; font-size: 22px; font-weight: 700;
+      letter-spacing: -0.5px; font-family: 'Inter', sans-serif;
+    }
+
+    .login-field { margin-bottom: 20px; text-align: left; }
+    
+    .login-field label {
+      display: block; margin-bottom: 8px; font-size: 11px;
+      color: #64748b; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    .login-field input {
+      width: 100%; padding: 12px 14px; box-sizing: border-box;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px; font-size: 14px; font-weight: 500;
+      color: #1e293b; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .login-field input::placeholder { color: #94a3b8; }
+    
+    .login-field input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .login-btn {
+      width: 100%; padding: 14px; margin-top: 10px;
+      background: #2563eb;
+      color: #ffffff; border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    }
+
+    .login-btn:hover {
+      background: #1d4ed8;
+      box-shadow: 0 6px 10px rgba(37, 99, 235, 0.3);
+    }
+
+    .login-btn:active { transform: scale(0.98); }
+
+    .login-error-msg {
+      color: #dc2626; font-size: 13px; margin-top: 16px; margin-bottom: 0;
+      display: none; font-weight: 500;
+      background: #fef2f2; padding: 10px 14px;
+      border-radius: 8px; border: 1px solid #fecaca;
+    }
+  </style>
+
+  <div id="login-overlay">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="wellopharmacy-trasperent.png" alt="Wello Pharmacy"/>
+      </div>
+      <h2>Admin Portal</h2>
+
+      <div class="login-field">
+        <label>Username</label>
+        <input type="text" id="login-user" placeholder="Enter username" autocomplete="off"/>
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="Enter password"/>
+      </div>
+
+      <button class="login-btn" id="login-btn">Secure Login</button>
+      <p class="login-error-msg" id="login-error">Invalid username or password</p>
+    </div>
+  </div>
+
+  <!-- Profile Dropdown Styles -->
+  <style>
+    .profile-wrap { position:relative; }
+    .profile-btn {
+      display:flex; align-items:center; gap:8px;
+      padding:6px 12px 6px 6px; border-radius:10px;
+      background:#f0f4ff; border:1.5px solid #e2e8f0;
+      cursor:pointer; font-family:'Inter',sans-serif;
+      font-size:13px; font-weight:600; color:#1b2d5a;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .profile-btn:hover { background:#e8eeff; border-color:#cbd5e1; }
+    .profile-btn .avatar {
+      width:28px; height:28px; border-radius:8px;
+      background:linear-gradient(135deg,#1b2d5a,#2a4a8e);
+      color:#fff; display:flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:700;
+    }
+    .profile-btn .chevron { font-size:10px; color:#94a3b8; margin-left:2px; }
+    .profile-menu {
+      display:none; position:absolute; top:calc(100% + 6px); right:0;
+      background:#fff; border-radius:12px; min-width:200px;
+      box-shadow:0 4px 6px rgba(0,0,0,0.04), 0 12px 30px rgba(0,0,0,0.1);
+      border:1px solid #e5e7eb; padding:6px; z-index:100;
+      animation: lgCardIn 0.15s ease-out;
+    }
+    .profile-menu.show { display:block; }
+    .profile-menu-item {
+      display:flex; align-items:center; gap:10px;
+      padding:10px 14px; border-radius:8px; cursor:pointer;
+      font-size:13px; font-weight:500; color:#374151;
+      border:none; background:none; width:100%; text-align:left;
+      font-family:'Inter',sans-serif;
+      transition: background 0.12s;
+    }
+    .profile-menu-item:hover { background:#f5f7fa; }
+    .profile-menu-item.danger { color:#dc2626; }
+    .profile-menu-item.danger:hover { background:#fef2f2; }
+    .profile-menu-divider { height:1px; background:#f3f4f6; margin:4px 8px; }
+  </style>
 
   <!-- Top Bar -->
   <header class="topbar">
@@ -21,10 +172,25 @@
       <h1>Feedback Dashboard</h1>
     </div>
     <div class="topbar-actions">
+      <button class="btn btn-outline" id="email-report-btn" title="Send Weekly Report">📧 Email Report</button>
       <button class="btn btn-accent" id="manage-branches-btn">🏪 Manage Branches</button>
       <button class="btn btn-outline" id="qr-btn">🔳 QR Codes</button>
       <a href="print-qr.html" class="btn btn-outline" style="text-decoration:none;">🖨️ Print QR</a>
       <button class="btn btn-success" id="export-btn">📥 Export CSV</button>
+
+      <!-- Profile Dropdown -->
+      <div class="profile-wrap">
+        <button class="profile-btn" id="profile-toggle">
+          <div class="avatar">W</div>
+          Admin
+          <span class="chevron">▼</span>
+        </button>
+        <div class="profile-menu" id="profile-menu">
+          <button class="profile-menu-item" id="change-pass-btn">🔑 Change Password</button>
+          <div class="profile-menu-divider"></div>
+          <button class="profile-menu-item danger" id="logout-btn">⏻ Logout</button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -101,6 +267,7 @@
             <th>Improvement Areas</th>
             <th>Comments</th>
             <th>Location</th>
+            <th style="text-align:center;">Action</th>
           </tr>
         </thead>
         <tbody id="feedback-tbody">
@@ -198,6 +365,78 @@
       <div class="form-actions" style="justify-content:center;margin-top:20px;">
         <button class="btn btn-outline" onclick="document.getElementById('delete-modal').classList.remove('visible')">Cancel</button>
         <button class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ Email Report Modal ═══════ -->
+  <div class="modal-overlay" id="email-report-modal">
+    <div class="modal modal-sm">
+      <button class="modal-close" onclick="document.getElementById('email-report-modal').classList.remove('visible')">&times;</button>
+      <h2>📧 Email Reports</h2>
+      <p style="color:var(--text-sec);font-size:0.85rem;margin-bottom:16px;">Configure automated reports or send a manual report immediately.</p>
+      
+      <!-- Automated Settings -->
+      <div style="background:var(--surface-alt); padding:16px; border-radius:10px; border:1px solid var(--border); margin-bottom:20px;">
+        <h3 style="font-size:0.95rem; color:var(--navy); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+          ⏱️ Automated Schedule
+        </h3>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Auto-Send To</label>
+          <input type="email" id="auto-email-input" class="form-control" placeholder="manager@pharmacy.com"/>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Frequency</label>
+          <select id="auto-freq-input" class="form-control" style="cursor:pointer;">
+            <option value="none">Disabled (Do not send automatically)</option>
+            <option value="daily">Daily (End of Day Summary)</option>
+            <option value="weekly">Weekly (Every Monday Morning)</option>
+            <option value="monthly">Monthly (1st of Every Month)</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-success" id="save-schedule-btn" style="width:100%; justify-content:center;">Save Schedule</button>
+      </div>
+
+      <!-- Manual Send -->
+      <div style="border-top:1px solid var(--border); padding-top:16px;">
+        <h3 style="font-size:0.95rem; color:var(--text-sec); margin-bottom:12px;">Send Manual Report Now</h3>
+        <div class="form-group" style="margin-bottom:10px;">
+          <select id="manual-timeframe-input" class="form-control" style="cursor:pointer;">
+            <option value="1">Daily Report (Last 24 Hours)</option>
+            <option value="7" selected>Weekly Report (Last 7 Days)</option>
+            <option value="30">Monthly Report (Last 30 Days)</option>
+            <option value="9999">Full Data (All Time)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="email" id="report-email-input" class="form-control" placeholder="Enter email for instant report"/>
+        </div>
+        <button type="button" class="btn btn-outline" id="send-report-btn" style="width:100%; justify-content:center;">Send Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ Change Password Modal ═══════ -->
+  <div class="modal-overlay" id="password-modal">
+    <div class="modal modal-sm">
+      <button class="modal-close" onclick="document.getElementById('password-modal').classList.remove('visible')">&times;</button>
+      <h2>🔑 Change Password</h2>
+      <p style="color:var(--text-sec);font-size:0.85rem;margin-bottom:16px;">Update your admin login password.</p>
+      <div class="form-group">
+        <label class="form-label">Current Password <span class="required">*</span></label>
+        <input type="password" id="current-pass-input" class="form-control" placeholder="Enter current password" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">New Password <span class="required">*</span></label>
+        <input type="password" id="new-pass-input" class="form-control" placeholder="Enter new password" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm New Password <span class="required">*</span></label>
+        <input type="password" id="confirm-pass-input" class="form-control" placeholder="Confirm new password" required/>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('password-modal').classList.remove('visible')">Cancel</button>
+        <button type="button" class="btn btn-primary" id="save-pass-btn">Update Password</button>
       </div>
     </div>
   </div>
