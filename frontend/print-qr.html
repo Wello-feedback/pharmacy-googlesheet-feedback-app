@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Print QR Codes | All Branches</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f5f8;
+      color: #1a2035;
+      padding: 24px;
+    }
+
+    /* ─── Screen Header (hidden on print) ───────────── */
+    .page-header {
+      text-align: center;
+      padding: 24px;
+      margin-bottom: 28px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border: 1px solid #e5e7eb;
+    }
+    .page-header h1 { font-size: 1.4rem; color: #1b2d5a; margin-bottom: 6px; }
+    .page-header p { color: #6b7280; font-size: 0.88rem; }
+    .page-header .actions {
+      margin-top: 16px; display: flex; gap: 12px; justify-content: center;
+    }
+    .page-header .btn {
+      padding: 10px 26px; font-size: 0.88rem; font-weight: 600;
+      font-family: inherit; border: none; border-radius: 8px;
+      cursor: pointer; transition: 0.2s;
+    }
+    .btn-print { background: #1b2d5a; color: #fff; }
+    .btn-print:hover { background: #243a6e; transform: translateY(-1px); }
+    .btn-back { background: #f0f1f4; color: #374151; }
+    .btn-back:hover { background: #e5e6ea; }
+
+    /* ─── QR Grid ────────────────────────────────────── */
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+      max-width: 1260px;
+      margin: 0 auto;
+    }
+
+    /* ─── QR Card — Premium Clean ────────────────────── */
+    .qr-card {
+      background: #ffffff;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 40px 30px 30px;
+      text-align: center;
+      page-break-inside: avoid;
+      break-inside: avoid;
+      transition: 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .qr-card:hover {
+      border-color: #d1d5db;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.07);
+      transform: translateY(-2px);
+    }
+
+    /* Subtle top accent */
+    .qr-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #1b2d5a 0%, #e8952c 50%, #f5ad4f 100%);
+    }
+
+    /* ─── Logo — Big & Premium ───────────────────────── */
+    .card-logo {
+      width: 140px; height: 140px;
+      margin: 0 auto 18px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-logo img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+    }
+
+    /* Pharmacy name */
+    .card-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #1b2d5a;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+
+    /* Tagline under name */
+    .card-subtitle {
+      font-size: 0.76rem;
+      color: #9ca3af;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    /* QR code frame */
+    .qr-frame {
+      width: 190px; height: 190px;
+      margin: 0 auto 22px;
+      padding: 10px;
+      border: 2px solid #e5e7eb;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      background: #fff;
+      position: relative;
+    }
+    .qr-frame img {
+      width: 100%; height: 100%; object-fit: contain;
+    }
+
+    /* ─── CTA Section ────────────────────────────────── */
+    .scan-cta-wrap {
+      margin-bottom: 10px;
+    }
+    .scan-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #1b2d5a 0%, #2a4178 100%);
+      padding: 11px 26px;
+      border-radius: 50px;
+      box-shadow: 0 3px 12px rgba(27,45,90,0.15);
+    }
+    .scan-cta-icon { font-size: 1.15rem; line-height: 1; }
+    .scan-cta-text {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+    }
+
+    /* Instruction */
+    .scan-desc {
+      font-size: 0.8rem;
+      color: #6b7280;
+      line-height: 1.55;
+      max-width: 270px;
+      margin: 12px auto 0;
+    }
+    .scan-desc strong {
+      color: #374151;
+    }
+
+    /* ─── Footer tagline ─────────────────────────────── */
+    .card-footer {
+      margin-top: 22px;
+      padding-top: 16px;
+      border-top: 1px solid #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .footer-heart {
+      color: #e8952c;
+      font-size: 0.9rem;
+    }
+    .footer-msg {
+      font-size: 0.74rem;
+      color: #9ca3af;
+      letter-spacing: 0.01em;
+    }
+
+    /* ─── Loading ─────────────────────────────────────── */
+    .loading { text-align: center; padding: 60px; color: #9ca3af; font-size: 0.95rem; }
+
+    /* ─── Print Styles ───────────────────────────────── */
+    @media print {
+      @page { margin: 8mm; size: A4; }
+      body {
+        background: #fff !important;
+        padding: 0;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      .page-header { display: none !important; }
+      .qr-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+      .qr-card {
+        box-shadow: none;
+        border: 1.5px solid #d1d5db;
+        padding: 30px 22px 24px;
+      }
+      .qr-card:hover { transform: none; box-shadow: none; }
+      .qr-card::before {
+        background: linear-gradient(90deg, #1b2d5a, #e8952c, #f5ad4f) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .scan-cta {
+        background: linear-gradient(135deg, #1b2d5a, #2a4178) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .card-logo { width: 110px; height: 110px; }
+      .qr-frame { width: 160px; height: 160px; }
+      .card-name { font-size: 0.95rem; }
+    }
+
+    @media (max-width: 420px) {
+      .qr-grid { grid-template-columns: 1fr; }
+      body { padding: 14px; }
+      .qr-card { padding: 30px 22px 24px; }
+      .card-logo { width: 120px; height: 120px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen Header -->
+  <div class="page-header">
+    <h1>🖨️ Printable QR Cards</h1>
+    <p>Print and place at billing counters — customers scan to give feedback instantly.</p>
+    <div class="actions">
+      <button class="btn btn-print" onclick="window.print()">🖨️ Print All</button>
+      <button class="btn btn-back" onclick="window.location.href='admin.html'">← Dashboard</button>
+    </div>
+  </div>
+
+  <!-- QR Cards -->
+  <div class="qr-grid" id="qr-grid">
+    <div class="loading">Loading QR codes...</div>
+  </div>
+
+  <script>
+    const API = window.location.origin;
+
+    async function loadQRCodes() {
+      const grid = document.getElementById('qr-grid');
+      try {
+        const res = await fetch(`${API}/api/branches`);
+        const branches = await res.json();
+
+        grid.innerHTML = branches.map(b => `
+          <div class="qr-card">
+            <div class="card-logo">
+              <img src="wellopharmacy-trasperent.png" alt="Wello Pharmacy"/>
+            </div>
+            <div class="card-name">${b.name}</div>
+            <div class="card-subtitle">Wellness For All</div>
+
+            <div class="qr-frame">
+              <img src="/api/qr/${b.code}" alt="Scan QR Code"/>
+            </div>
+
+            <div class="scan-cta-wrap">
+              <div class="scan-cta">
+                <span class="scan-cta-icon">📱</span>
+                <span class="scan-cta-text">Scan to Share Your Feedback</span>
+              </div>
+            </div>
+            <p class="scan-desc">Open your phone camera & scan the QR code — <strong>it takes less than a minute!</strong></p>
+
+            <div class="card-footer">
+              <span class="footer-heart">♥</span>
+              <span class="footer-msg">Your opinion matters • Thank you for choosing us</span>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        grid.innerHTML = '<div class="loading">Failed to load. Make sure the server is running.</div>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadQRCodes);
+  </script>
+</body>
+</html>

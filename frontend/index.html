@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Share your pharmacy experience with us. Your feedback helps us improve our services." />
+  <title>Share Your Feedback | Pharmacy Feedback</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>" />
+
+  <link rel="stylesheet" href="css/customer.css" />
+</head>
+<body>
+  <div class="feedback-container">
+
+    <!-- ─── Header ──────────────────────────────────────── -->
+    <header class="feedback-header">
+      <div class="pharmacy-logo">
+        <img src="wellopharmacy-trasperent.png" alt="Wello Pharmacy" style="width:72px;height:72px;object-fit:contain;"/>
+      </div>
+      <h1>How was your experience?</h1>
+      <div class="branch-badge">
+        <span class="dot"></span>
+        <span class="branch-badge-text">Loading branch...</span>
+      </div>
+      <p class="feedback-subtitle">Your feedback helps us serve you better 🙏</p>
+    </header>
+
+    <!-- ─── Feedback Form Card ──────────────────────────── -->
+    <div class="feedback-card">
+      <form id="feedback-form" autocomplete="off">
+
+        <!-- Customer Name (Required) -->
+        <div class="form-section">
+          <label class="section-label">
+            Your Name <span class="required">*</span>
+          </label>
+          <div class="input-group">
+            <input
+              type="text"
+              id="customer-name"
+              class="form-input"
+              placeholder="Enter your full name"
+              maxlength="100"
+              required
+            />
+            <p id="name-error" class="input-error">Please enter your name (at least 2 characters)</p>
+          </div>
+        </div>
+
+        <!-- Mobile Number (Optional) -->
+        <div class="form-section">
+          <label class="section-label">
+            Mobile Number <span class="input-hint">(Optional)</span>
+          </label>
+          <div class="input-group">
+            <input
+              type="tel"
+              id="customer-mobile"
+              class="form-input"
+              placeholder="10-digit mobile number"
+              maxlength="10"
+              pattern="[0-9]{10}"
+            />
+          </div>
+        </div>
+
+        <!-- Star Rating -->
+        <div class="form-section">
+          <label class="section-label">
+            Rate Your Experience <span class="required">*</span>
+          </label>
+          <div class="star-rating" id="star-rating"></div>
+          <p class="rating-label" id="rating-label">Tap to rate</p>
+          <p id="rating-error" class="input-error" style="text-align:center;">Please select a rating</p>
+        </div>
+
+        <!-- Improvement Tags -->
+        <div class="form-section">
+          <label class="section-label">
+            What can we improve?
+          </label>
+          <div class="tags-grid" id="tags-grid"></div>
+        </div>
+
+        <!-- Comments -->
+        <div class="form-section">
+          <label class="section-label">
+            Additional Comments
+          </label>
+          <textarea
+            id="comments"
+            class="form-textarea"
+            placeholder="Share any additional thoughts or suggestions..."
+            maxlength="500"
+          ></textarea>
+          <p class="char-count">0/500</p>
+        </div>
+
+        <!-- Location captured silently in background -->
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn" id="submit-btn">
+          <span class="btn-text">
+            <span class="btn-label">Submit Feedback ✨</span>
+            <span class="btn-spinner"></span>
+          </span>
+        </button>
+
+      </form>
+    </div>
+
+    <!-- ─── Success Screen ──────────────────────────────── -->
+    <div class="success-screen" id="success-screen">
+      <div class="feedback-card">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="20 6 9 17 4 12" stroke-dasharray="50" stroke-dashoffset="0"/>
+          </svg>
+        </div>
+        <h2>Thank You! 🎉</h2>
+        <p>Your feedback has been received. We will work to improve your experience!</p>
+      </div>
+    </div>
+
+    <!-- ─── Footer ──────────────────────────────────────── -->
+    <footer class="feedback-footer">
+      <p>Powered by Pharmacy Feedback System</p>
+    </footer>
+
+  </div>
+
+  <script src="js/customer.js"></script>
+</body>
+</html>
