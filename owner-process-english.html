@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Feedback System - Process Overview</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --bg: #f4f7f6;
+      --surface: #ffffff;
+      --text: #2c3e50;
+      --text-sec: #7f8c8d;
+      --primary: #3498db;
+      --accent: #2ecc71;
+      --shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    
+    .header h1 {
+      font-size: 2.8rem;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      font-size: 1.2rem;
+      color: var(--text-sec);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .card {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 40px;
+      box-shadow: var(--shadow);
+    }
+    
+    .card-title {
+      font-size: 1.8rem;
+      color: #2c3e50;
+      margin-top: 0;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    /* Process Diagram */
+    .process-diagram {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin: 40px 0;
+      position: relative;
+    }
+    
+    /* Arrow line connecting steps */
+    .process-diagram::before {
+      content: '';
+      position: absolute;
+      top: 40px;
+      left: 10%;
+      right: 10%;
+      height: 3px;
+      background: #e2e8f0;
+      z-index: 1;
+    }
+    
+    .process-step {
+      text-align: center;
+      flex: 1;
+      position: relative;
+      z-index: 2;
+      padding: 0 15px;
+    }
+    
+    .step-icon {
+      width: 80px;
+      height: 80px;
+      background: white;
+      border: 3px solid var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 35px;
+      margin: 0 auto 20px auto;
+      box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+    }
+    
+    .process-step:nth-child(2) .step-icon { border-color: #f39c12; }
+    .process-step:nth-child(3) .step-icon { border-color: var(--accent); }
+    .process-step:nth-child(4) .step-icon { border-color: #9b59b6; }
+    
+    .process-step h4 {
+      font-size: 1.1rem;
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+    
+    .process-step p {
+      font-size: 0.95rem;
+      color: var(--text-sec);
+      margin: 0;
+    }
+    
+    /* Feature Grid */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+    
+    .feature-item {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    
+    .feature-item-icon {
+      font-size: 2rem;
+      background: #f0f7fb;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 15px;
+      flex-shrink: 0;
+    }
+    
+    .feature-item h4 {
+      margin: 0 0 5px 0;
+      font-size: 1.2rem;
+    }
+    
+    .feature-item p {
+      margin: 0;
+      color: var(--text-sec);
+      font-size: 0.95rem;
+    }
+
+    /* Highlight Banner */
+    .banner {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(41, 128, 185, 0.3);
+    }
+    
+    .banner h3 {
+      font-size: 2rem;
+      margin: 0 0 15px 0;
+    }
+    
+    .banner p {
+      font-size: 1.1rem;
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+      .process-diagram {
+        flex-direction: column;
+        gap: 30px;
+      }
+      .process-diagram::before { display: none; }
+      .process-step { text-align: left; display: flex; align-items: center; gap: 20px; }
+      .step-icon { margin: 0; flex-shrink: 0; width: 60px; height: 60px; font-size: 25px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Smart Feedback System</h1>
+      <p>A simple, step-by-step guide to how the Wello Pharmacy Digital Feedback System works.</p>
+    </div>
+
+    <!-- Section 1: The Step-by-Step Process -->
+    <div class="card">
+      <h2 class="card-title"><span>🔄</span> How It Works (The Core Process)</h2>
+      
+      <div class="process-diagram">
+        
+        <div class="process-step">
+          <div class="step-icon">📱</div>
+          <h4>1. Scan QR Code</h4>
+          <p>The customer simply scans the QR code at the billing counter using their smartphone camera.</p>
+        </div>
+        
+        <div class="process-step">
+          <div class="step-icon">⭐</div>
+          <h4>2. Give Feedback</h4>
+          <p>A beautiful form opens automatically. They give a Star Rating and leave their comments quickly.</p>
+        </div>
+        
+        <div class="process-step">
+          <div class="step-icon">☁️</div>
+          <h4>3. Live Data Saving</h4>
+          <p>The feedback is instantly saved to the secure database in the background without any delays.</p>
+        </div>
+        
+        <div class="process-step">
+          <div class="step-icon">📊</div>
+          <h4>4. Admin Tracking</h4>
+          <p>Management can instantly see the new feedback on their live dashboard, from anywhere in the world.</p>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- Section 2: Key Features -->
+    <div class="card">
+      <h2 class="card-title"><span>✨</span> Key Features Explained Simply</h2>
+      
+      <div class="feature-grid">
+        
+        <div class="feature-item">
+          <div class="feature-item-icon">📍</div>
+          <div>
+            <h4>GPS Verification</h4>
+            <p>To prevent fake reviews, the system records the customer's GPS location at the exact moment they submit the form. You will know if they were actually inside the pharmacy.</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-item-icon">📧</div>
+          <div>
+            <h4>Automated Email Reports</h4>
+            <p>You don't need to check the dashboard every day! The system works as your virtual assistant and automatically emails you a Weekly or Monthly summary report showing branch performance.</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-item-icon">🏢</div>
+          <div>
+            <h4>Multi-Branch Support</h4>
+            <p>You can add unlimited branches (e.g., Civil Lines, Burari). Each branch gets its own unique QR Code, so the system always knows which branch the customer is rating.</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-item-icon">🚫</div>
+          <div>
+            <h4>Paperless & Clean</h4>
+            <p>No more printing physical feedback forms or manually typing data into computers. Everything is 100% digital, eco-friendly, and completely free of typing errors.</p>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- Section 3: The Result -->
+    <div class="banner">
+      <h3>Zero Maintenance, Maximum Control</h3>
+      <p>This software was built using advanced cloud technologies to ensure it requires <b>Zero Monthly Maintenance Fees</b>. It runs entirely on its own, providing you with valuable customer insights while you focus on running the business.</p>
+    </div>
+
+  </div>
+
+</body>
+</html>
