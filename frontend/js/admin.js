@@ -242,14 +242,14 @@
                 <td><span class="branch-code-badge">${b.code}</span></td>
                 <td class="branch-name-cell">${b.name}</td>
                 <td style="text-align:center;">
-                  <button class="btn-icon" onclick="window._showCodes('${b.code}','${b.name.replace(/'/g, "\\'")}')" title="View QR & Barcode">
+                  <button class="btn-icon" onclick="window._showCodes('${String(b.code).replace(/'/g, "\\'")}','${String(b.name).replace(/'/g, "\\'")}')" title="View QR & Barcode">
                     <span>🔳</span>
                   </button>
                 </td>
                 <td style="text-align:center;">
                   <div class="action-btns">
-                    <button class="btn-icon btn-edit" onclick="window._editBranch('${b.code}','${b.name.replace(/'/g, "\\'")}')" title="Edit">✏️</button>
-                    <button class="btn-icon btn-delete" onclick="window._deleteBranch('${b.code}','${b.name.replace(/'/g, "\\'")}')" title="Delete">🗑️</button>
+                    <button class="btn-icon btn-edit" onclick="window._editBranch('${String(b.code).replace(/'/g, "\\'")}','${String(b.name).replace(/'/g, "\\'")}')" title="Edit">✏️</button>
+                    <button class="btn-icon btn-delete" onclick="window._deleteBranch('${String(b.code).replace(/'/g, "\\'")}','${String(b.name).replace(/'/g, "\\'")}')" title="Delete">🗑️</button>
                   </div>
                 </td>
               </tr>
