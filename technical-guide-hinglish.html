@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technical Architecture Guide (Hinglish) - Pharmacy Feedback System</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --text-sec: #64748b;
+      --primary: #0284c7;
+      --primary-light: #e0f2fe;
+      --accent: #10b981;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    }
+    
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 10px;
+      margin-top: 0;
+    }
+    
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-sec);
+      margin: 0;
+    }
+    
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    
+    h3 {
+      font-size: 1.2rem;
+      color: #334155;
+      margin-top: 24px;
+    }
+    
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    
+    .tech-item {
+      background: var(--bg);
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: transform 0.2s;
+    }
+    
+    .tech-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    
+    .tech-icon {
+      font-size: 24px;
+    }
+    
+    .process-step {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 24px;
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .step-number {
+      background: var(--primary);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+    }
+    
+    code {
+      background: #f1f5f9;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      color: #db2777;
+      font-size: 0.9em;
+    }
+    
+    .highlight-box {
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      padding: 16px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+      color: #0c4a6e;
+    }
+
+    ul li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>System Architecture Guide (Hinglish)</h1>
+      <p class="subtitle">Wello Pharmacy Feedback System &mdash; Full Technical Flow & Details</p>
+    </header>
+
+    <div class="card">
+      <h2>1. Technology Stack (Humne kya use kiya hai?)</h2>
+      <p>Is project ko bilkul "Serverless" aur "Zero-Cost" banaya gaya hai. Iska matlab hai ki aapko koi server ya database kharidne ki zaroorat nahi hai. Sab kuch free aur super fast hai.</p>
+      
+      <div class="tech-grid">
+        <div class="tech-item">
+          <span class="tech-icon">🌐</span>
+          <div>
+            <strong>HTML5 & CSS3</strong><br>
+            <span style="font-size:0.85rem;color:var(--text-sec)">UI banane ke liye (Bina kisi bhari framework ke)</span>
+          </div>
+        </div>
+        <div class="tech-item">
+          <span class="tech-icon">⚡</span>
+          <div>
+            <strong>Vanilla JavaScript</strong><br>
+            <span style="font-size:0.85rem;color:var(--text-sec)">Logic, API calling aur Data render karne ke liye</span>
+          </div>
+        </div>
+        <div class="tech-item">
+          <span class="tech-icon">☁️</span>
+          <div>
+            <strong>Google Apps Script</strong><br>
+            <span style="font-size:0.85rem;color:var(--text-sec)">Hamara Backend (Server) jo APIs ko handle karta hai</span>
+          </div>
+        </div>
+        <div class="tech-item">
+          <span class="tech-icon">📊</span>
+          <div>
+            <strong>Google Sheets</strong><br>
+            <span style="font-size:0.85rem;color:var(--text-sec)">Hamara Database (Data save aur read karne ke liye)</span>
+          </div>
+        </div>
+        <div class="tech-item">
+          <span class="tech-icon">🐙</span>
+          <div>
+            <strong>GitHub Pages</strong><br>
+            <span style="font-size:0.85rem;color:var(--text-sec)">Website ko live host karne ke liye (Fast CDN)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2. Architecture Overview (System kaam kaise karta hai?)</h2>
+      <p>Is system ke 2 main hisse (parts) hain: <b>Frontend</b> (Jo user ko dikhta hai) aur <b>Backend</b> (Jo piche background me data process karta hai).</p>
+      
+      <h3>A) The Frontend (Client-Side)</h3>
+      <p>Ye wo code hai jo GitHub Pages par live hai. Isme 2 main screens hain:</p>
+      <ul>
+        <li><b>Customer Form (<code>index.html</code>):</b> Ye screen specially mobile ke liye design ki gayi hai. Jab customer QR scan karta hai, toh URL se us branch ka Code nikal liya jata hai. Uske baad browser ka GPS feature use karke location background me fetch hoti hai.</li>
+        <li><b>Admin Dashboard (<code>admin.html</code>):</b> Ye admin panel hai jise secure karne ke liye <code>sessionStorage</code> aur <code>localStorage</code> ka use kiya gaya hai. Isme JavaScript direct backend se data mangwati hai aur bina page reload kiye Table aur Charts generate karti hai (Dynamic DOM manipulation).</li>
+      </ul>
+
+      <h3>B) The Backend (Google Apps Script API)</h3>
+      <p>Aapne jo code Apps Script me daala hai, wo ek <b>REST API</b> ki tarah kaam karta hai. Jab bhi Frontend se koi Request (GET ya POST) aati hai, toh <code>handleRequest()</code> function usko padhta hai aur check karta hai ki "action" kya hai (jaise: <code>addFeedback</code>, <code>getBranches</code>, etc.). Phir wo <code>SpreadsheetApp</code> use karke Google Sheet me se row delete, add, ya read karta hai aur JSON format me result wapas bhej deta hai.</p>
+    </div>
+
+    <div class="card">
+      <h2>3. Technical Data Flow (Step-by-Step Technical Process)</h2>
+      
+      <div class="process-step">
+        <div class="step-number">1</div>
+        <div>
+          <strong>QR Scan & Initialization (Customer Entry)</strong>
+          <p>Customer ek QR code scan karta hai. URL ke aakhir me <code>?branch=025</code> likha hota hai. Javascript is <code>branch</code> parameter ko padh kar branch ka naam auto-fill kar deti hai. Usi time, <code>navigator.geolocation</code> API customer ki current GPS location nikalne ki koshish karti hai.</p>
+        </div>
+      </div>
+
+      <div class="process-step">
+        <div class="step-number">2</div>
+        <div>
+          <strong>Data Submit (API Calling)</strong>
+          <p>Jab customer "Submit" dabata hai, Javascript unke rating, tags, comment aur location ka ek JSON object banati hai. Phir Javascript <code>fetch()</code> API ka use karke is JSON data ko Google Apps Script ke Web App URL par POST request ke roop me bhejti hai. (Isme CORS handle karne ke liye <code>text/plain</code> content-type use hota hai).</p>
+        </div>
+      </div>
+
+      <div class="process-step">
+        <div class="step-number">3</div>
+        <div>
+          <strong>Database Writing (Backend me Data Save hona)</strong>
+          <p>Google Apps Script is POST request ko <code>doPost(e)</code> event me catch karti hai. JSON ko parse karti hai aur usme current Date & Time (Timestamp) jod kar Google Sheet (Feedback sheet) me ek nayi row append kar deti hai: <code>sheet.appendRow([date, name, mobile...])</code>. Phir frontend ko <code>{success: true}</code> bhej deti hai jisse "Thank you" screen aa jati hai.</p>
+        </div>
+      </div>
+
+      <div class="process-step">
+        <div class="step-number">4</div>
+        <div>
+          <strong>Automated Email Reporting (Cron Jobs / Triggers)</strong>
+          <p>Backend me ek Timer chalta hai (Google Time-driven trigger). Ye trigger roj subah 8 baje <code>automatedReportTask()</code> function ko jagata hai. Ye function "Settings" tab me check karta hai ki mail ki frequency kya hai (Daily, Weekly ya Monthly). Agar aaj mail bhejne ka din hai, toh wo Data collect karke ek HTML Email template banata hai, ek CSV file generate karta hai (Blob form me), aur <code>MailApp.sendEmail()</code> ke zariye admin ko automatically bhej deta hai.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>4. Security & Error Handling (Bugs se bachne ki techniques)</h2>
+      
+      <div class="highlight-box">
+        <strong>Data Casting Bug Fix (Jo number wali problem aayi thi):</strong><br>
+        Google Sheets kabhi-kabhi branch names ko (jaise '102') Text ki jagah Number samajh leta hai. Jab Javascript me number par `.replace()` function chalaya jata hai, toh system crash (loading loop) ho jata hai. Isko theek karne ke liye code me humne <b>Strict String Casting</b> <code>String(value)</code> ka use kiya hai taaki application crash na ho.
+      </div>
+      
+      <ul>
+        <li><b>Asynchronous Await (<code>async/await</code>):</b> API se data aane me time lagta hai, isliye humne promises ka use kiya hai (<code>await fetch()</code>) taaki data aane tak system ruka rahe aur galat data na dikhaye.</li>
+        <li><b>Local Storage Security:</b> Admin login details <code>localStorage</code> aur <code>sessionStorage</code> me rakhi gayi hain. Agar aap tab close karte hain, toh session expire ho jata hai aur wapas aane par aapse dobara password manga jata hai. Ye simple but strong security hai.</li>
+        <li><b>Debouncing on Search:</b> Agar aap Table me kisi customer ka naam search karte hain, toh table ekdam lag nahi karta, kyunki frontend ka architecture sirf wohi data render karta hai jo match hota hai.</li>
+      </ul>
+    </div>
+
+    <footer style="text-align: center; color: var(--text-sec); margin-top: 40px; padding-bottom: 40px;">
+      <p>&copy; 2026 Wello Retail Pvt Ltd. &mdash; Ek robust, fast aur zero-maintenance Feedback Architecture.</p>
+    </footer>
+  </div>
+
+</body>
+</html>
