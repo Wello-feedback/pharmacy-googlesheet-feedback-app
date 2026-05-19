@@ -439,9 +439,74 @@
       if (e.key === "Enter") { state.page = 1; loadFeedback(); }
     });
     $("#search-btn").addEventListener("click", () => { state.page = 1; loadFeedback(); });
-    $("#export-btn").addEventListener("click", () => {
-      showToast("Please export CSV directly from your Google Sheet.", "success");
-      window.open("https://docs.google.com/spreadsheets/", "_blank");
+    $("#export-btn").addEventListener("click", async () => {
+      const btn = $("#export-btn");
+      const originalText = btn.innerHTML;
+      btn.innerHTML = "⏳ Exporting...";
+      btn.disabled = true;
+
+      try {
+        let url = `${API_URL}?action=getFeedback&page=1&limit=10000`;
+        if (state.branch) url += `&branch_code=${state.branch}`;
+        const search = $("#search-input");
+        if (search && search.value) url += `&search=${encodeURIComponent(search.value)}`;
+
+        const r = await fetch(url);
+        const d = await r.json();
+        
+        if (!d.data || d.data.length === 0) {
+          showToast("No data to export", "error");
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+          return;
+        }
+
+        // Convert to CSV
+        const headers = ["Date", "Customer Name", "Customer Mobile", "Branch Code", "Branch Name", "Rating", "Improvement Tags", "Comments", "Latitude", "Longitude"];
+        const csvRows = [headers.join(",")];
+        
+        d.data.forEach(f => {
+          const dt = f.created_at ? new Date(f.created_at).toLocaleString("en-IN") : "";
+          const tags = (f.improvement_tags || []).join("; ");
+          
+          const row = [
+            `"${dt}"`,
+            `"${(f.customer_name || "").replace(/"/g, '""')}"`,
+            `"${f.customer_mobile || ""}"`,
+            `"${f.branch_code || ""}"`,
+            `"${(f.branch_name || "").replace(/"/g, '""')}"`,
+            f.rating,
+            `"${tags}"`,
+            `"${(f.comments || "").replace(/"/g, '""')}"`,
+            f.latitude || "",
+            f.longitude || ""
+          ];
+          csvRows.push(row.join(","));
+        });
+
+        const csvString = csvRows.join("\n");
+        const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+        const urlObj = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = urlObj;
+        let filename = "Feedback_Export";
+        if (state.branch) filename += `_${state.branch}`;
+        filename += `_${new Date().toISOString().split('T')[0]}.csv`;
+        
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(urlObj);
+        
+        showToast("Export successful!", "success");
+      } catch (e) {
+        showToast("Export failed", "error");
+        console.error(e);
+      }
+      
+      btn.innerHTML = originalText;
+      btn.disabled = false;
     });
 
     // QR modal
